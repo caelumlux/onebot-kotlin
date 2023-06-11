@@ -4,11 +4,11 @@ import java.util.concurrent.TimeUnit
 object Versions {
     const val projectVersion = "0.3.5"
 
-    const val miraiCoreVersion = "2.9.2"
-    const val miraiConsoleVersion = "2.9.2"
+    const val miraiCoreVersion = "2.14.0"
+    const val miraiConsoleVersion = "2.14.0"
 
     const val ktorVersion = "1.5.4"
-    const val kotlinVersion = "1.5.30"
+    const val kotlinVersion = "1.7.22"
     const val kotlinSerializationVersion = "1.2.2"
     const val autoService = "1.0.1"
     const val logback = "1.2.10"

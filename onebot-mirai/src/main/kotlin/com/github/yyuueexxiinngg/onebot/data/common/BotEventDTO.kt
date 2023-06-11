@@ -255,11 +255,12 @@ suspend fun BotEvent.toDTO(isRawMessage: Boolean = false): EventDTO {
             }
         }
         is MemberHonorChangeEvent -> {
+
             MemberHonorChangeEventDTO(
                 self_id = bot.id,
                 user_id = user.id,
                 group_id = group.id,
-                honor_type = honorType.name.lowercase(),
+                honor_type = honorType.id,
                 time = currentTimeSeconds()
             )
         }
@@ -437,7 +438,7 @@ data class MemberHonorChangeEventDTO(
     val sub_type: String = "honor",
     val user_id: Long,
     val group_id: Long,
-    val honor_type: String = "talkative",
+    val honor_type: Int = 1,
     override var time: Long
 ) : BotEventDTO() {
     override var post_type: String = "notice"

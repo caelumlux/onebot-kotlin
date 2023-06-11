@@ -103,7 +103,7 @@ java {
 }
 
 kotlin.sourceSets.all {
-    languageSettings.useExperimentalAnnotation("kotlin.RequiresOptIn")
+    languageSettings.optIn("kotlin.RequiresOptIn")
 }
 
 kotlin.target.compilations.all {

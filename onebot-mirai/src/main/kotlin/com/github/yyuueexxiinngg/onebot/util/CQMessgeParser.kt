@@ -291,7 +291,6 @@ suspend fun Message.toCQString(): String {
         is LightApp -> "[CQ:json,data=${content.escape()}]"
         is MessageSource -> ""
         is QuoteReply -> "[CQ:reply,id=${source.internalIds.toMessageId(source.botId, source.fromId)}]"
-        is Voice -> "[CQ:record,url=${url?.escape()},file=${md5.toUHexString("")}]"
         is OnlineAudio -> "[CQ:record,url=${urlForDownload.escape()},file=${fileMd5.toUHexString("")}]"
         else -> "此处消息的转义尚未被插件支持"
     }

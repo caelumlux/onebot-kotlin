@@ -92,6 +92,7 @@ class BotSession internal constructor(
     }
 
     suspend fun triggerEvent(event: BotEvent) {
+
         // Boolean checks should be faster then List size checks I suppose.
         if (this.hasStringFormatSubscription) {
             triggerEventInternal(event, true)

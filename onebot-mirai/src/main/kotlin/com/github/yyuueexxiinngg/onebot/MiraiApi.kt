@@ -13,9 +13,9 @@ import net.mamoe.mirai.LowLevelApi
 import net.mamoe.mirai.Mirai
 import net.mamoe.mirai.contact.MemberPermission
 import net.mamoe.mirai.contact.PermissionDeniedException
+import net.mamoe.mirai.contact.active.GroupActive
 import net.mamoe.mirai.contact.announcement.OfflineAnnouncement
 import net.mamoe.mirai.contact.getMemberOrFail
-import net.mamoe.mirai.data.GroupHonorListData
 import net.mamoe.mirai.data.GroupHonorType
 import net.mamoe.mirai.event.events.BotInvitedJoinGroupRequestEvent
 import net.mamoe.mirai.event.events.MemberJoinRequestEvent
@@ -72,9 +72,9 @@ suspend fun callMiraiApi(action: String?, params: ApiParams, mirai: MiraiApi): R
             "clean_data_dir" -> responseDTO = mirai.cleanDataDir(params)
             "clean_plugin_log" -> responseDTO = mirai.cleanPluginLog(params)
             ".handle_quick_operation" -> responseDTO = mirai.handleQuickOperation(params)
-
             "set_group_name" -> responseDTO = mirai.setGroupName(params)
-            "get_group_honor_info" -> responseDTO = mirai.getGroupHonorInfo(params)
+            //  mirai 13 以后不再兼容
+            // "get_group_honor_info" -> responseDTO = mirai.getGroupHonorInfo(params)
             "get_msg" -> responseDTO = mirai.getMessage(params)
 
             "_set_group_announcement" -> responseDTO = mirai.setGroupAnnouncement(params)
@@ -628,78 +628,6 @@ class MiraiApi(val bot: Bot) {
             ResponseDTO.InvalidRequest()
         }
     }
-
-    @MiraiExperimentalApi
-    @LowLevelApi
-    @Suppress("DuplicatedCode")
-    suspend fun getGroupHonorInfo(params: ApiParams): ResponseDTO {
-        val groupId = params["group_id"].long
-        val type = params["type"].string
-
-        var finalData: GroupHonorInfoData? = null
-
-        if (type == "talkative" || type == "all") {
-            val data = Mirai.getRawGroupHonorListData(bot, groupId, GroupHonorType.TALKATIVE)
-            val jsonData = data?.let { Json.encodeToString(GroupHonorListData.serializer(), it) }
-            val cqData = jsonData?.let { Gson().fromJson(it, GroupHonorInfoData::class.java) }
-            finalData = cqData?.let { cqData }
-        }
-
-        if (type == "performer" || type == "all") {
-            val data = Mirai.getRawGroupHonorListData(bot, groupId, GroupHonorType.PERFORMER)
-            val jsonData = data?.let { Json.encodeToString(GroupHonorListData.serializer(), it) }
-            val cqData = jsonData?.let { Gson().fromJson(it, GroupHonorInfoData::class.java) }
-            finalData = finalData?.apply { performerList = cqData?.actorList } ?: cqData?.let { cqData }
-        }
-
-        if (type == "legend" || type == "all") {
-            val data = Mirai.getRawGroupHonorListData(bot, groupId, GroupHonorType.LEGEND)
-            val jsonData = data?.let { Json.encodeToString(GroupHonorListData.serializer(), it) }
-            val cqData = jsonData?.let { Gson().fromJson(it, GroupHonorInfoData::class.java) }
-            finalData = finalData?.apply { legendList = cqData?.legendList } ?: cqData?.let { cqData }
-        }
-
-        if (type == "strong_newbie" || type == "all") {
-            val data = Mirai.getRawGroupHonorListData(bot, groupId, GroupHonorType.STRONG_NEWBIE)
-            val jsonData = data?.let { Json.encodeToString(GroupHonorListData.serializer(), it) }
-            val cqData = jsonData?.let { Gson().fromJson(it, GroupHonorInfoData::class.java) }
-            finalData = finalData?.apply { strongNewbieList = cqData?.strongNewbieList } ?: cqData?.let { cqData }
-        }
-
-        if (type == "emotion" || type == "all") {
-            val data = Mirai.getRawGroupHonorListData(bot, groupId, GroupHonorType.EMOTION)
-            val jsonData = data?.let { Json.encodeToString(GroupHonorListData.serializer(), it) }
-            val cqData = jsonData?.let { Gson().fromJson(it, GroupHonorInfoData::class.java) }
-            finalData = finalData?.apply { emotionList = cqData?.emotionList } ?: cqData?.let { cqData }
-        }
-
-        if (type == "active") {
-            val data = Mirai.getRawGroupHonorListData(bot, groupId, GroupHonorType.ACTIVE)
-            val jsonData = data?.let { Json.encodeToString(GroupHonorListData.serializer(), it) }
-            val cqData = jsonData?.let { Gson().fromJson(it, GroupHonorInfoData::class.java) }
-            finalData = finalData?.apply {
-                activeObj = cqData?.activeObj
-                showActiveObj = cqData?.showActiveObj
-            } ?: cqData?.let { cqData }
-        }
-
-        if (type == "exclusive") {
-            val data = Mirai.getRawGroupHonorListData(bot, groupId, GroupHonorType.EXCLUSIVE)
-            val jsonData = data?.let { Json.encodeToString(GroupHonorListData.serializer(), it) }
-            val cqData = jsonData?.let { Gson().fromJson(it, GroupHonorInfoData::class.java) }
-            finalData = finalData?.apply { exclusiveList = cqData?.exclusiveList } ?: cqData?.let { cqData }
-        }
-
-        if (type == "manage") {
-            val data = Mirai.getRawGroupHonorListData(bot, groupId, GroupHonorType.MANAGE)
-            val jsonData = data?.let { Json.encodeToString(GroupHonorListData.serializer(), it) }
-            val cqData = jsonData?.let { Gson().fromJson(it, GroupHonorInfoData::class.java) }
-            finalData = finalData?.apply { manageList = cqData?.manageList } ?: cqData?.let { cqData }
-        }
-
-        finalData?.let { return ResponseDTO.HonorInfo(it) } ?: return ResponseDTO.MiraiFailure()
-    }
-
     /////////////////
     //// hidden ////
     ///////////////
